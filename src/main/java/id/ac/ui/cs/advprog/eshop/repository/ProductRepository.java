@@ -17,6 +17,13 @@ public class ProductRepository {
         return product;
     }
 
+    public void edit(String Id, Product updateProduct){
+        Product product = getProductById(Id);
+        product.setProductName(updateProduct.getProductName());
+        product.setProductQuantity(updateProduct.getProductQuantity());
+        return;
+    }
+
     public Product getProductById(String Id){
         for(Product product: productData){
             if(product.getProductId().equals(Id)){
@@ -26,6 +33,7 @@ public class ProductRepository {
         }
         return null;
     }
+
 
 
 
