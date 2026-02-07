@@ -14,12 +14,10 @@ Repository ini menambahkan fitur edit dan delete untuk produk. Berikut refleksi 
 - HTTP verb sesuai aksi: POST untuk create/edit dan DELETE untuk delete agar perubahan state tidak lewat GET.
 
 ## Kesalahan yang ditemukan dan Peningkatan yang dapat dilakukan (Menggunakan bantuan AI (tidak 100%) untuk mengidentifikasi kesalahan ) 
-- Belum ada validasi input: nama kosong atau quantity negatif belum dicek. Tambahkan `@Valid` dan `BindingResult` untuk menampilkan error di form.
+- Belum ada validasi input: nama kosong atau quantity negatif belum dicek. Bisa tambahkan `@Valid` dan `BindingResult` untuk menampilkan error di form.
 - Edit GET tanpa null handling: jika ID tidak ditemukan, view menerima `null`. Lebih baik redirect ke list atau return 404.
-- Tipe input quantity: gunakan `type="number"` plus min/max agar mengurangi input tidak valid.
+- Tipe input quantity: lebih baik gunakan `type="number"` plus min/max agar mengurangi input tidak valid.
 - Redundansi di repository: service sudah cek eksistensi, repository masih melakukan `getProductById` lagi. Bisa disederhanakan.
-- Gaya response delete: saat ini status diatur via servlet response. Lebih rapi gunakan `ResponseStatusException` atau response DTO yang konsisten.
-- CSRF: bila nanti memakai Spring Security, AJAX delete harus menyertakan CSRF token.
-- Thread safety: list in-memory tidak thread-safe. Untuk concurrency, gunakan koleksi concurrent atau database.
+- Gaya response delete: saat ini status diatur via servlet response. Lebih rapi jika menggunakan `ResponseStatusException` atau response DTO yang konsisten.
 - Typo minor di UI: teks seperti "Product' List" dan placeholder perlu dibetulkan.
 
