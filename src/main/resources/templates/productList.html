@@ -4,6 +4,52 @@
   <meta charset="UTF-8">
   <title>Product List</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <style>
+    .toast-notice {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      min-width: 220px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-left-width: 4px;
+      border-radius: 0.25rem;
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1050;
+    }
+    .toast-notice.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .toast-notice .toast-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid #eee;
+      font-weight: 600;
+    }
+    .toast-notice .toast-body {
+      padding: 0.5rem 0.75rem;
+    }
+    .toast-success {
+      border-left-color: #28a745;
+    }
+    .toast-error {
+      border-left-color: #dc3545;
+    }
+    #toastClose {
+      background: transparent;
+      border: 0;
+      font-size: 1.2rem;
+      line-height: 1;
+      padding: 0;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
 
@@ -25,12 +71,84 @@
       <td th:text="${product.productQuantity}"></td>
       <td>
         <a th:href="@{/product/edit/{id}(id=${product.productId})}" class="btn btn-sm btn-secondary">Edit</a>
+        <button type="button" class="btn btn-sm btn-danger ml-1 js-delete-product" th:attr="data-url=@{/product/delete/{id}(id=${product.productId})}">
+          Delete
+        </button>
       </td>
     </tr>
     </tbody>
   </table>
 </div>
 
+<div id="toast" class="toast-notice" role="status" aria-live="polite">
+  <div class="toast-header">
+    <span id="toastTitle">Notice</span>
+    <button type="button" id="toastClose" aria-label="Close">&times;</button>
+  </div>
+  <div id="toastBody" class="toast-body"></div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var buttons = document.querySelectorAll('.js-delete-product');
+    var toast = document.getElementById('toast');
+    var toastTitle = document.getElementById('toastTitle');
+    var toastBody = document.getElementById('toastBody');
+    var toastClose = document.getElementById('toastClose');
+    var toastTimer;
+
+    function showToast(title, message, isError) {
+      if (!toast) return;
+      toastTitle.textContent = title;
+      toastBody.textContent = message;
+      toast.classList.remove('toast-error', 'toast-success');
+      toast.classList.add(isError ? 'toast-error' : 'toast-success');
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    if (toastClose) {
+      toastClose.addEventListener('click', function () {
+        toast.classList.remove('show');
+      });
+    }
+
+    buttons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        var url = button.getAttribute('data-url');
+        if (!url) {
+          showToast('Error', 'Missing delete URL.', true);
+          return;
+        }
+        if (!window.confirm('Delete this product?')) {
+          return;
+        }
+        fetch(url, { method: 'DELETE' })
+          .then(function (response) {
+            if (!response.ok) {
+              return response.text().then(function (text) {
+                throw new Error(text || 'Delete failed.');
+              });
+            }
+            return response.text();
+          })
+          .then(function () {
+            var row = button.closest('tr');
+            if (row) {
+              row.remove();
+            }
+            showToast('Deleted', 'Product removed.', false);
+          })
+          .catch(function (error) {
+            showToast('Error', error.message || 'Delete failed.', true);
+          });
+      });
+    });
+  });
+</script>
 </body>
 </html>

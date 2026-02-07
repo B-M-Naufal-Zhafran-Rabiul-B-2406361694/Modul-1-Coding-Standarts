@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.List;
 
@@ -43,6 +44,11 @@ public class ProductController {
         return "redirect:/product/list";
     }
 
+    @DeleteMapping("/delete/{id}")
+    public void deleteProduct(@PathVariable String id, HttpServletResponse response){
+        service.delete(id);
+        return;
+    }
 
     @GetMapping("/list")
     public String productListPage (Model model){
