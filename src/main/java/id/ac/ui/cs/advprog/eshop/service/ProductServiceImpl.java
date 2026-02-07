@@ -25,6 +25,21 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
+    public Product edit(String id, Product product) {
+        Product existing = productRepository.getProductById(id);
+        if (existing == null) throw new IllegalArgumentException("Product not found");
+        product.setProductId(id);
+        productRepository.edit(id, product);
+        return productRepository.getProductById(id);
+    }
+
+    @Override
+    public Product getProductById(String Id){
+        return productRepository.getProductById(Id);
+    }
+
+
+    @Override
     public List<Product> findAll() {
         Iterator<Product> productIterator = productRepository.findAll();
         List<Product> allProduct = new ArrayList<>();
