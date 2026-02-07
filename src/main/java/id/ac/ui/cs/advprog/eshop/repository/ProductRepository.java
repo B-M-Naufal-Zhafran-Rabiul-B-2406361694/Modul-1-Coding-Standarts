@@ -24,6 +24,13 @@ public class ProductRepository {
         return;
     }
 
+    public void delete(String id){
+        Product product = getProductById(id);
+        productData.remove(product);
+        return;
+    }
+
+
     public Product getProductById(String Id){
         for(Product product: productData){
             if(product.getProductId().equals(Id)){
@@ -33,6 +40,8 @@ public class ProductRepository {
         }
         return null;
     }
+
+
 
 
 
