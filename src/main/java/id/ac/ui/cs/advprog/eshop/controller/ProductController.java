@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.List;
 
@@ -41,6 +42,17 @@ public class ProductController {
     public String editProductPost(@PathVariable String id, @ModelAttribute Product product){
         service.edit(id, product);
         return "redirect:/product/list";
+    }
+
+    @DeleteMapping("/delete/{id}")
+    @ResponseBody
+    public String deleteProduct(@PathVariable String id, HttpServletResponse response){
+        boolean deleted = service.delete(id);
+        if (!deleted) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return "Product not found";
+        }
+        return "Deleted";
     }
 
 
