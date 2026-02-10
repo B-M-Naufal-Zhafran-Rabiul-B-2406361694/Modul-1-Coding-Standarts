@@ -29,6 +29,7 @@ class HomePageFunctionalTest {
         baseUrl = String.format("%s:%d", testBaseUrl, serverPort);
     }
 
+
     @Test
     void pageTitle_isCorrect(ChromeDriver driver) throws Exception {
         driver.get(baseUrl);
