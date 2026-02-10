@@ -1,7 +1,5 @@
 # Refleksi 1
 
-Repository ini menambahkan fitur edit dan delete untuk produk. Berikut refleksi singkat tentang kualitas kode dan keamanan.
-
 ## Prinsip Clean Code yang Diterapkan
 - Separation of concerns: controller menangani HTTP, service menangani aturan bisnis, repository menangani penyimpanan data.
 - Single responsibility: setiap kelas punya peran yang fokus (ProductController, ProductServiceImpl, ProductRepository).
@@ -20,4 +18,20 @@ Repository ini menambahkan fitur edit dan delete untuk produk. Berikut refleksi 
 - Redundansi di repository: service sudah cek eksistensi, repository masih melakukan `getProductById` lagi. Bisa disederhanakan.
 - Gaya response delete: saat ini status diatur via servlet response. Lebih rapi jika menggunakan `ResponseStatusException` atau response DTO yang konsisten.
 - Typo minor di UI: teks seperti "Product' List" dan placeholder perlu dibetulkan.
+
+# Refleksi 2
+
+## Unit Test
+Setelah menulis unit test, saya merasa sangat capek karna harus memikirkan banyak scenario. Menurut saya sendiri tidak ada jumlah pasti untuk unit test pada sebuah class, karena unit test menyesuaikan berapa jumlah method atau lebih tepatnya menyesuaikan kemungkinan flow scenario. seperti yang dijelaskan, untuk memastikan bahwa unit test kita cukup untuk memverifikasi program kita, kita dapat melihat coverage dari unit-test kita. nah tapi muncullah pertanyaan **If you have 100% code coverage, does
+that mean your code has no bugs or errors?.** Jawabannya tidak, coverage cuman memastikan bahwa baris kode atau branch logic pernah dijalankan.
+
+## Case Study
+Jika saya membuat functional test baru dengan setup dan variabel yang sama, kodenya akan terasa kurang bersih karena terjadi duplikasi (repeated setup, baseUrl, driver, locator). Ini menurunkan maintainability. Potensi issue lain menurut saya: magic strings (selector/id), test data hard-coded, serta ketergantungan urutan data yang membuat test rapuh. Perbaikan yang bisa dilakukan:
+
+- Buat base class/utility untuk setup (@BeforeEach, baseUrl, helper openCreateProductPage(), createProduct()).
+- Definisikan locator dan test data sebagai constant agar tidak tersebar.
+- Gunakan Page Object untuk halaman create/list agar selector terpusat dan mudah dirawat.
+- Gunakan helper assert (misal assertProductListed(name, qty)) untuk mengurangi repetisi.
+- Pertimbangkan parameterized test jika skenario mirip dengan data berbeda.
+
 
