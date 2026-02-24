@@ -40,6 +40,6 @@ Jika saya membuat functional test baru dengan setup dan variabel yang sama, kode
 ## Strategi memperbaiki Code Quality Issue
 Tentunya hal yang pertama saya lakukan adalah menganalisis error yang saya dapatkan dengan menggunakan LLM, contohnya pada saat sonarcloud saya bermasalah: hal pertama yang saya lakukan adalah mengirimkan errornya ke LLM, dari situ saya tahu bahwa masalahnya adalah sonar token belum diinput, setelah saya masukkan sonar_token dll ke secret variables, sonarcloud bisa berjalan dengan baik. Contoh lainnya ketika CodeQl saya gagal berjalan, saya memasukkan error tersebut ke LLM, lalu mendapati masalahnya bahwa ada 2 codeQl yang berjalan, setelah itu saya mematikan(disable) codeQl standart yang ada di settings repository, lalu membuat file codeQl.yml
 
-##
-
+## Definisi CI-CD
+Menurut saya, implementasi workflow GitHub saat ini sudah memenuhi konsep Continuous Integration dan Continuous Deployment karena setiap push dan pull_request langsung memicu proses otomatis seperti pengujian, analisis kualitas kode, dan security scanning. Dengan begitu, setiap perubahan bisa tervalidasi lebih cepat dan risiko error saat merge kode menjadi lebih kecil, jadi kualitas kode tetap tervalidasi sebelum deploy. Setelah itu, Render mengambil commit terbaru dan langsung melakukan deployment, sehingga alurnya berlanjut dari integrasi sampai deploy.
 
