@@ -35,3 +35,11 @@ Jika saya membuat functional test baru dengan setup dan variabel yang sama, kode
 - Pertimbangkan parameterized test jika skenario mirip dengan data berbeda.
 
 
+# Refleksi Module 2
+
+## Strategi memperbaiki Code Quality Issue
+Tentunya hal yang pertama saya lakukan adalah menganalisis error yang saya dapatkan dengan menggunakan LLM, contohnya pada saat sonarcloud saya bermasalah: hal pertama yang saya lakukan adalah mengirimkan errornya ke LLM, dari situ saya tahu bahwa masalahnya adalah sonar token belum diinput, setelah saya masukkan sonar_token dll ke secret variables, sonarcloud bisa berjalan dengan baik. Contoh lainnya ketika CodeQl saya gagal berjalan, saya memasukkan error tersebut ke LLM, lalu mendapati masalahnya bahwa ada 2 codeQl yang berjalan, setelah itu saya mematikan(disable) codeQl standart yang ada di settings repository, lalu membuat file codeQl.yml
+
+##
+
+
