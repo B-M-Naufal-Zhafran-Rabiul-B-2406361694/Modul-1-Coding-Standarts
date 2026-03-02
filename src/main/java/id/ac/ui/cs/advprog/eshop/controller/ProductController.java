@@ -1,7 +1,8 @@
 package id.ac.ui.cs.advprog.eshop.controller;
 
 import id.ac.ui.cs.advprog.eshop.model.Product;
-import id.ac.ui.cs.advprog.eshop.service.ProductService;
+import id.ac.ui.cs.advprog.eshop.service.ProductReadService;
+import id.ac.ui.cs.advprog.eshop.service.ProductWriteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +17,10 @@ import java.util.List;
 public class ProductController {
 
     @Autowired
-    private ProductService service;
+    private ProductReadService productReadService;
+
+    @Autowired
+    private ProductWriteService productWriteService;
 
     @GetMapping("/create")
     public String createProductPage (Model model){
@@ -27,46 +31,45 @@ public class ProductController {
 
     @PostMapping("/create")
     public String createProductPost(@ModelAttribute Product product, Model model){
-        service.create(product);
+        productWriteService.create(product);
         return "redirect:list";
     }
 
     @GetMapping("/edit/{productId}")
     public String editProductPage(@PathVariable String productId, Model model) {
-        Product product = service.getProductById(productId);
+        Product product = productReadService.getProductById(productId);
         model.addAttribute("product", product);
         return "editProduct";
     }
 
     @PostMapping("/edit/{id}")
     public String editProductPost(@PathVariable String id, @ModelAttribute Product product){
-        service.edit(id, product);
+        productWriteService.edit(id, product);
         return "redirect:/product/list";
     }
 
     @PostMapping("/edit")
     public String editProductPost(@ModelAttribute Product product, Model model){
-        service.edit(product.getProductId(), product);
+        productWriteService.edit(product.getProductId(), product);
         return "redirect:list";
     }
 
     @DeleteMapping("/delete/{id}")
     public void deleteProduct(@PathVariable String id, HttpServletResponse response){
-        service.delete(id);
+        productWriteService.delete(id);
         return;
     }
 
     @PostMapping("/delete")
     public String deleteProductById(@RequestParam("productId") String productId){
-        service.delete(productId);
+        productWriteService.delete(productId);
         return "redirect:list";
     }
 
     @GetMapping("/list")
     public String productListPage (Model model){
-        List<Product> allProducts = service.findAll();
+        List<Product> allProducts = productReadService.findAll();
         model.addAttribute("products", allProducts);
         return "productList";
     }
 }
-

@@ -1,7 +1,8 @@
 package id.ac.ui.cs.advprog.eshop.controller;
 
 import id.ac.ui.cs.advprog.eshop.model.Car;
-import id.ac.ui.cs.advprog.eshop.service.CarService;
+import id.ac.ui.cs.advprog.eshop.service.CarReadService;
+import id.ac.ui.cs.advprog.eshop.service.CarWriteService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -30,7 +31,10 @@ class CarControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private CarService carService;
+    private CarReadService carReadService;
+
+    @MockBean
+    private CarWriteService carWriteService;
 
     @Test
     void createCarPage_returnsViewAndModel() throws Exception {
@@ -44,7 +48,7 @@ class CarControllerTest {
     void createCarPost_redirectsToList() throws Exception {
         Car created = new Car();
         created.setCarId("car-1");
-        when(carService.create(any(Car.class))).thenReturn(created);
+        when(carWriteService.create(any(Car.class))).thenReturn(created);
 
         mockMvc.perform(post("/car/createCar")
                         .param("carName", "Avanza")
@@ -53,7 +57,7 @@ class CarControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("listCar"));
 
-        verify(carService).create(any(Car.class));
+        verify(carWriteService).create(any(Car.class));
     }
 
     @Test
@@ -64,7 +68,7 @@ class CarControllerTest {
         car2.setCarId("car-2");
 
         List<Car> cars = Arrays.asList(car1, car2);
-        when(carService.findAll()).thenReturn(cars);
+        when(carReadService.findAll()).thenReturn(cars);
 
         mockMvc.perform(get("/car/listCar"))
                 .andExpect(status().isOk())
@@ -76,7 +80,7 @@ class CarControllerTest {
     void editCarPage_returnsViewAndModel() throws Exception {
         Car car = new Car();
         car.setCarId("car-1");
-        when(carService.findById("car-1")).thenReturn(car);
+        when(carReadService.findById("car-1")).thenReturn(car);
 
         mockMvc.perform(get("/car/editCar/car-1"))
                 .andExpect(status().isOk())
@@ -94,7 +98,7 @@ class CarControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("listCar"));
 
-        verify(carService).update(eq("car-1"), any(Car.class));
+        verify(carWriteService).update(eq("car-1"), any(Car.class));
     }
 
     @Test
@@ -104,6 +108,6 @@ class CarControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("listCar"));
 
-        verify(carService).deleteCarById("car-1");
+        verify(carWriteService).deleteCarById("car-1");
     }
 }
