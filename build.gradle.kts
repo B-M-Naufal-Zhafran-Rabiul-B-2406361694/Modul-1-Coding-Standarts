@@ -44,6 +44,7 @@ dependencies {
     testImplementation("org.seleniumhq.selenium:selenium-java:$seleniumJavaVersion")
     testImplementation("io.github.bonigarcia:selenium-jupiter:$seleniumJupiterVersion")
     testImplementation("io.github.bonigarcia:webdrivermanager:$webdrivermanagerVersion")
+    testImplementation("org.mockito:mockito-inline:5.2.0")
     testImplementation("org.junit.jupiter:junit-jupiter:${junitJupiterVersion}")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

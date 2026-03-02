@@ -1,6 +1,7 @@
 package id.ac.ui.cs.advprog.eshop.controller;
 
 import id.ac.ui.cs.advprog.eshop.model.Product;
+import id.ac.ui.cs.advprog.eshop.service.CarServiceImpl;
 import id.ac.ui.cs.advprog.eshop.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ class ProductControllerTest {
 
     @MockBean
     private ProductService service;
+
+    @MockBean
+    private CarServiceImpl carService;
 
     @Test
     void createProductPage_returnsViewAndModel() throws Exception {
@@ -90,9 +94,37 @@ class ProductControllerTest {
     }
 
     @Test
+    void editProductPost_withoutPathVariable_redirectsToList() throws Exception {
+        Product updated = new Product();
+        updated.setProductId("product-1");
+        updated.setProductName("New Name");
+        updated.setProductQuantity(25);
+        when(service.edit(eq("product-1"), any(Product.class))).thenReturn(updated);
+
+        mockMvc.perform(post("/product/edit")
+                        .param("productId", "product-1")
+                        .param("productName", "New Name")
+                        .param("productQuantity", "25"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("list"));
+
+        verify(service).edit(eq("product-1"), any(Product.class));
+    }
+
+    @Test
     void deleteProduct_callsService() throws Exception {
         mockMvc.perform(delete("/product/delete/product-1"))
                 .andExpect(status().isOk());
+
+        verify(service).delete("product-1");
+    }
+
+    @Test
+    void deleteProductById_redirectsToList() throws Exception {
+        mockMvc.perform(post("/product/delete")
+                        .param("productId", "product-1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("list"));
 
         verify(service).delete("product-1");
     }
