@@ -1,7 +1,6 @@
 package id.ac.ui.cs.advprog.eshop.controller;
 
 import id.ac.ui.cs.advprog.eshop.model.Product;
-import id.ac.ui.cs.advprog.eshop.service.CarServiceImpl;
 import id.ac.ui.cs.advprog.eshop.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +32,6 @@ class ProductControllerTest {
 
     @MockBean
     private ProductService service;
-
-    @MockBean
-    private CarServiceImpl carService;
 
     @Test
     void createProductPage_returnsViewAndModel() throws Exception {
