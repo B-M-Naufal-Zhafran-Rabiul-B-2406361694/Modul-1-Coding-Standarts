@@ -43,3 +43,23 @@ Tentunya hal yang pertama saya lakukan adalah menganalisis error yang saya dapat
 ## Definisi CI-CD
 Menurut saya, implementasi workflow GitHub saat ini sudah memenuhi konsep Continuous Integration dan Continuous Deployment karena setiap push dan pull_request langsung memicu proses otomatis seperti pengujian, analisis kualitas kode, dan security scanning. Dengan begitu, setiap perubahan bisa tervalidasi lebih cepat dan risiko error saat merge kode menjadi lebih kecil, jadi kualitas kode tetap tervalidasi sebelum deploy. Setelah itu, Render mengambil commit terbaru dan langsung melakukan deployment, sehingga alurnya berlanjut dari integrasi sampai deploy.
 
+# Refleksi Module 3
+
+## 1. Prinsip yang saya terapkan pada project
+Pada module ini saya menerapkan prinsip SOLID, terutama:
+- `SRP (Single Responsibility Principle)`: controller dipisah berdasarkan domain, misalnya `ProductController` dan `CarController` berada di kelas terpisah.
+- `LSP (Liskov Substitution Principle)`: `CarController` dibuat independen dan tidak lagi mewarisi `ProductController`, karena secara domain `Car` bukan turunan `Product`.
+- `ISP (Interface Segregation Principle)`: kontrak service dipecah menjadi interface kecil, yaitu `ProductReadService`/`ProductWriteService` dan `CarReadService`/`CarWriteService`.
+- `DIP (Dependency Inversion Principle)`: controller bergantung pada abstraksi (interface) seperti `CarReadService`, `CarWriteService`, `ProductReadService`, dan `ProductWriteService`, bukan langsung ke detail implementasi.
+
+## 2. Keuntungan menerapkan SOLID pada project
+- Kode lebih mudah dirawat: perubahan fitur mobil tidak lagi mengganggu alur produk karena controller dipisah (`SRP`).
+- Risiko bug lintas domain lebih kecil: saat `CarController` tidak mewarisi `ProductController`, perubahan endpoint product tidak otomatis memengaruhi car (`LSP`).
+- Testing lebih fokus dan sederhana: unit test controller cukup mock interface read/write yang dibutuhkan, tidak perlu menarik banyak dependency yang tidak dipakai (`ISP` + `DIP`).
+- Fleksibel terhadap perubahan implementasi: karena bergantung ke interface, implementasi service bisa diganti tanpa mengubah controller (`DIP`).
+
+## 3. Kerugian jika tidak menerapkan SOLID pada project
+- Class menjadi gemuk dan sulit dipahami: jika logic product dan car dicampur dalam satu class/controller, perubahan kecil bisa berdampak besar (`SRP` dilanggar).
+- Inheritance yang tidak tepat menyebabkan desain rapuh: ketika `CarController` diposisikan sebagai turunan `ProductController`, relasi domain menjadi tidak valid dan berpotensi menimbulkan perilaku tak terduga (`LSP` dilanggar).
+- Interface terlalu besar membuat client bergantung ke method yang tidak dibutuhkan: controller read-only tetap ikut terikat method write (`ISP` dilanggar).
+- Sulit mengganti implementasi: jika controller langsung inject `CarServiceImpl`, maka setiap pergantian implementasi perlu modifikasi di layer controller (`DIP` dilanggar).
