@@ -1,8 +1,8 @@
 package id.ac.ui.cs.advprog.eshop.controller;
 
 import id.ac.ui.cs.advprog.eshop.model.Product;
-import id.ac.ui.cs.advprog.eshop.service.CarServiceImpl;
-import id.ac.ui.cs.advprog.eshop.service.ProductService;
+import id.ac.ui.cs.advprog.eshop.service.ProductReadService;
+import id.ac.ui.cs.advprog.eshop.service.ProductWriteService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -32,10 +32,10 @@ class ProductControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private ProductService service;
+    private ProductReadService productReadService;
 
     @MockBean
-    private CarServiceImpl carService;
+    private ProductWriteService productWriteService;
 
     @Test
     void createProductPage_returnsViewAndModel() throws Exception {
@@ -51,7 +51,7 @@ class ProductControllerTest {
         created.setProductId("product-1");
         created.setProductName("Sampo Cap Bambang");
         created.setProductQuantity(100);
-        when(service.create(any(Product.class))).thenReturn(created);
+        when(productWriteService.create(any(Product.class))).thenReturn(created);
 
         mockMvc.perform(post("/product/create")
                         .param("productName", "Sampo Cap Bambang")
@@ -59,7 +59,7 @@ class ProductControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("list"));
 
-        verify(service).create(any(Product.class));
+        verify(productWriteService).create(any(Product.class));
     }
 
     @Test
@@ -68,7 +68,7 @@ class ProductControllerTest {
         product.setProductId("product-1");
         product.setProductName("Old Name");
         product.setProductQuantity(10);
-        when(service.getProductById("product-1")).thenReturn(product);
+        when(productReadService.getProductById("product-1")).thenReturn(product);
 
         mockMvc.perform(get("/product/edit/product-1"))
                 .andExpect(status().isOk())
@@ -82,7 +82,7 @@ class ProductControllerTest {
         updated.setProductId("product-1");
         updated.setProductName("New Name");
         updated.setProductQuantity(25);
-        when(service.edit(eq("product-1"), any(Product.class))).thenReturn(updated);
+        when(productWriteService.edit(eq("product-1"), any(Product.class))).thenReturn(updated);
 
         mockMvc.perform(post("/product/edit/product-1")
                         .param("productName", "New Name")
@@ -90,7 +90,7 @@ class ProductControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/product/list"));
 
-        verify(service).edit(eq("product-1"), any(Product.class));
+        verify(productWriteService).edit(eq("product-1"), any(Product.class));
     }
 
     @Test
@@ -99,7 +99,7 @@ class ProductControllerTest {
         updated.setProductId("product-1");
         updated.setProductName("New Name");
         updated.setProductQuantity(25);
-        when(service.edit(eq("product-1"), any(Product.class))).thenReturn(updated);
+        when(productWriteService.edit(eq("product-1"), any(Product.class))).thenReturn(updated);
 
         mockMvc.perform(post("/product/edit")
                         .param("productId", "product-1")
@@ -108,7 +108,7 @@ class ProductControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("list"));
 
-        verify(service).edit(eq("product-1"), any(Product.class));
+        verify(productWriteService).edit(eq("product-1"), any(Product.class));
     }
 
     @Test
@@ -116,7 +116,7 @@ class ProductControllerTest {
         mockMvc.perform(delete("/product/delete/product-1"))
                 .andExpect(status().isOk());
 
-        verify(service).delete("product-1");
+        verify(productWriteService).delete("product-1");
     }
 
     @Test
@@ -126,7 +126,7 @@ class ProductControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("list"));
 
-        verify(service).delete("product-1");
+        verify(productWriteService).delete("product-1");
     }
 
     @Test
@@ -142,7 +142,7 @@ class ProductControllerTest {
         product2.setProductQuantity(20);
 
         List<Product> products = Arrays.asList(product1, product2);
-        when(service.findAll()).thenReturn(products);
+        when(productReadService.findAll()).thenReturn(products);
 
         mockMvc.perform(get("/product/list"))
                 .andExpect(status().isOk())
