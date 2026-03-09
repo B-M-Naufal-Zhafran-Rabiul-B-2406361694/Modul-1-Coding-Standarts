@@ -2,11 +2,19 @@ package id.ac.ui.cs.advprog.eshop.model;
 
 import lombok.Getter;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 @Getter
 public class Payment {
+    private static final String METHOD_VOUCHER_CODE = "Voucher Code";
+    private static final String METHOD_CASH_ON_DELIVERY = "Cash On Delivery";
+    private static final String METHOD_BANK_TRANSFER = "Bank Transfer";
+
+    private static final String SUCCESS_STATUS = "SUCCESS";
+    private static final String REJECTED_STATUS = "REJECTED";
+
     private final String id;
     private final Order order;
     private final String method;
@@ -17,12 +25,12 @@ public class Payment {
         this.id = UUID.randomUUID().toString();
         this.order = order;
         this.method = method;
-        this.paymentData = paymentData;
-        this.status = resolveStatus(method, paymentData);
+        this.paymentData = paymentData == null ? new HashMap<>() : new HashMap<>(paymentData);
+        this.status = resolveStatus(method, this.paymentData);
     }
 
     public void setStatus(String status) {
-        if ("SUCCESS".equals(status) || "REJECTED".equals(status)) {
+        if (SUCCESS_STATUS.equals(status) || REJECTED_STATUS.equals(status)) {
             this.status = status;
         } else {
             throw new IllegalArgumentException();
@@ -30,21 +38,21 @@ public class Payment {
     }
 
     private String resolveStatus(String method, Map<String, String> paymentData) {
-        if ("Voucher Code".equals(method)) {
-            return isValidVoucherCode(paymentData.get("voucherCode")) ? "SUCCESS" : "REJECTED";
+        if (METHOD_VOUCHER_CODE.equals(method)) {
+            return isValidVoucherCode(paymentData.get("voucherCode")) ? SUCCESS_STATUS : REJECTED_STATUS;
         }
 
-        if ("Cash On Delivery".equals(method)) {
+        if (METHOD_CASH_ON_DELIVERY.equals(method)) {
             return hasText(paymentData.get("address")) && hasText(paymentData.get("deliveryFee"))
-                    ? "SUCCESS" : "REJECTED";
+                    ? SUCCESS_STATUS : REJECTED_STATUS;
         }
 
-        if ("Bank Transfer".equals(method)) {
+        if (METHOD_BANK_TRANSFER.equals(method)) {
             return hasText(paymentData.get("bankName")) && hasText(paymentData.get("referenceCode"))
-                    ? "SUCCESS" : "REJECTED";
+                    ? SUCCESS_STATUS : REJECTED_STATUS;
         }
 
-        return "REJECTED";
+        return REJECTED_STATUS;
     }
 
     private boolean isValidVoucherCode(String voucherCode) {
