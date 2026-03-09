@@ -63,3 +63,25 @@ Pada module ini saya menerapkan prinsip SOLID, terutama:
 - Inheritance yang tidak tepat menyebabkan desain rapuh: ketika `CarController` diposisikan sebagai turunan `ProductController`, relasi domain menjadi tidak valid dan berpotensi menimbulkan perilaku tak terduga (`LSP` dilanggar).
 - Interface terlalu besar membuat client bergantung ke method yang tidak dibutuhkan: controller read-only tetap ikut terikat method write (`ISP` dilanggar).
 - Sulit mengganti implementasi: jika controller langsung inject `CarServiceImpl`, maka setiap pergantian implementasi perlu modifikasi di layer controller (`DIP` dilanggar).
+
+# Refleksi Module 4
+
+## Refleksi 4.1
+
+### 1. Apakah TDD berguna atau tidak?
+Menurut saya, TDD sangat berguna karena membantu saya mendefinisikan perilaku yang diharapkan sebelum menulis implementasi. Dalam latihan ini, alur red-green-refactor membuat saya lebih fokus ke requirement kecil per langkah (misalnya validasi status order, create/update di repository, dan service behavior), sehingga bug lebih cepat terlihat.  
+
+Namun, TDD terasa kurang efektif kalau requirement belum jelas atau sering berubah drastis, karena test harus sering dirombak. Jadi, TDD paling terasa manfaatnya saat acceptance criteria cukup jelas.
+
+### 2. Evaluasi kualitas test berdasarkan prinsip F.I.R.S.T.
+Secara umum test yang saya tulis sudah mengarah ke F.I.R.S.T:
+- **Fast**: mayoritas unit test cepat karena memakai in-memory object dan mocking repository.
+- **Independent**: tiap test menggunakan setup sendiri (`@BeforeEach`) sehingga tidak saling bergantung urutan.
+- **Repeatable**: hasil test konsisten dijalankan berulang di lokal maupun CI.
+- **Self-validating**: semua test memakai assertion yang jelas pass/fail.
+- **Timely**: test dibuat sebelum/bersamaan implementasi untuk memandu coding.
+
+Hal yang perlu saya perbaiki berikutnya:
+- Menjaga agar tidak menjalankan command test paralel yang menulis report sama, karena bisa bikin false failure (bukan karena logic).
+- Mengurangi hardcoded string berulang dengan constant/enum agar test lebih mudah dirawat.
+- Menambah skenario edge case (misalnya input null/blank) supaya validasi domain lebih kuat.
