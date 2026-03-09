@@ -11,7 +11,12 @@ public class PaymentRepository {
     private final List<Payment> paymentData = new ArrayList<>();
 
     public Payment save(Payment payment) {
-        paymentData.add(payment);
+        int existingIndex = findIndexById(payment.getId());
+        if (existingIndex >= 0) {
+            paymentData.set(existingIndex, payment);
+        } else {
+            paymentData.add(payment);
+        }
         return payment;
     }
 
@@ -26,6 +31,16 @@ public class PaymentRepository {
     }
 
     public List<Payment> getAllPayments() {
-        return paymentData;
+        return new ArrayList<>(paymentData);
+    }
+
+    private int findIndexById(String paymentId) {
+        for (int i = 0; i < paymentData.size(); i++) {
+            if (paymentData.get(i).getId().equals(paymentId)) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 }
