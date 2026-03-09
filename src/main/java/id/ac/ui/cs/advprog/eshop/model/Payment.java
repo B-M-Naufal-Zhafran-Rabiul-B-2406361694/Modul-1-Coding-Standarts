@@ -8,15 +8,25 @@ import java.util.UUID;
 @Getter
 public class Payment {
     private final String id;
+    private final Order order;
     private final String method;
-    private final String status;
+    private String status;
     private final Map<String, String> paymentData;
 
     public Payment(Order order, String method, Map<String, String> paymentData) {
         this.id = UUID.randomUUID().toString();
+        this.order = order;
         this.method = method;
         this.paymentData = paymentData;
         this.status = resolveStatus(method, paymentData);
+    }
+
+    public void setStatus(String status) {
+        if ("SUCCESS".equals(status) || "REJECTED".equals(status)) {
+            this.status = status;
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
     private String resolveStatus(String method, Map<String, String> paymentData) {
