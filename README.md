@@ -85,3 +85,24 @@ Hal yang perlu saya perbaiki berikutnya:
 - Menjaga agar tidak menjalankan command test paralel yang menulis report sama, karena bisa bikin false failure (bukan karena logic).
 - Mengurangi hardcoded string berulang dengan constant/enum agar test lebih mudah dirawat.
 - Menambah skenario edge case (misalnya input null/blank) supaya validasi domain lebih kuat.
+
+## Refleksi 4.2 (Bonus 2)
+
+### 1. Pendapat saya tentang kode partner
+Kode partner sudah berjalan dan fitur utama payment flow bisa dipakai dari unit test sampai functional test. Namun, masih ada beberapa aspek maintainability yang kurang, terutama penggunaan magic string yang tersebar, method dengan banyak tanggung jawab, serta struktur model payment yang membuat validasi domain tersebar di beberapa tempat.
+
+### 2. Kontribusi yang saya lakukan pada kode partner
+Saya melakukan refactor di area payment agar struktur lebih rapi tanpa mengubah behavior bisnis, lalu mengirimkannya lewat pull request berikut:
+- https://github.com/B-Sean-Marcello-Maheron-2406401792/Modul-1-Coding-Standards/pull/27
+
+### 3. Code smell yang saya temukan
+- Magic string untuk method/status payment yang diulang di banyak class.
+- Kompleksitas conditional yang terlalu padat di validasi voucher dan sinkronisasi status order.
+- Encapsulation kurang kuat (mutable state dan ekspos struktur data internal repository).
+- Repetisi logic yang membuat perubahan kecil berpotensi menyebar ke banyak titik.
+
+### 4. Langkah refactor yang saya usulkan dan eksekusi
+- Merapikan struktur model payment agar validasi data lebih terlokalisasi di class yang tepat.
+- Menyederhanakan payment service flow agar alur pembuatan payment dan update status lebih mudah ditelusuri.
+- Memperbaiki repository payment dengan struktur penyimpanan yang lebih aman terhadap update dan tidak mengekspos internal state secara langsung.
+- Menambah dan menyesuaikan test agar perubahan refactor tetap menjaga perilaku fitur yang sudah ada.
