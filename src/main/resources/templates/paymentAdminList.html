@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Admin List</title>
+</head>
+<body>
+<h3>Payment Admin List</h3>
+<div th:if="${payments != null}" th:text="${payments.size()}"></div>
+</body>
+</html>

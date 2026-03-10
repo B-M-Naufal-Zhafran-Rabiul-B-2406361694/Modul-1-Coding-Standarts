@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Order History</title>
+</head>
+<body>
+<h3>Order History</h3>
+<div th:text="${author}"></div>
+<div th:if="${orders != null}" th:text="${orders.size()}"></div>
+</body>
+</html>
