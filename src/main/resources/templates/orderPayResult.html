@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Result</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<body>
+<div class="container mt-4">
+    <h3>Payment Result</h3>
+
+    <table class="table table-bordered w-75">
+        <tr>
+            <th>Order ID</th>
+            <td th:text="${order.id}"></td>
+        </tr>
+        <tr>
+            <th>Payment ID</th>
+            <td id="paymentIdValue" th:text="${paymentId}"></td>
+        </tr>
+        <tr>
+            <th>Payment Status</th>
+            <td id="paymentStatusValue" th:text="${paymentStatus}"></td>
+        </tr>
+    </table>
+
+    <a th:href="@{/payment/detail/{paymentId}(paymentId=${paymentId})}" class="btn btn-primary">View Payment Detail</a>
+    <a th:href="@{/order/history}" class="btn btn-outline-secondary ml-2">Back to Order History</a>
+</div>
+</body>
+</html>
