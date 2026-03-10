@@ -2,10 +2,57 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Order Pay</title>
+    <title>Pay Order</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 </head>
 <body>
-<h3>Order Pay</h3>
-<div th:text="${order.id}"></div>
+<div class="container mt-4">
+    <h3>Pay Order</h3>
+    <p>
+        Order ID:
+        <strong th:text="${order.id}"></strong>
+    </p>
+
+    <form th:action="@{/order/pay/{orderId}(orderId=${order.id})}" method="post">
+        <div class="form-group col-md-6 px-0">
+            <label for="methodSelect">Payment Method</label>
+            <select id="methodSelect" name="method" class="form-control">
+                <option>Voucher Code</option>
+                <option>Cash On Delivery</option>
+                <option>Bank Transfer</option>
+            </select>
+        </div>
+
+        <div class="form-group col-md-6 px-0">
+            <label for="voucherCodeInput">Voucher Code</label>
+            <input id="voucherCodeInput" name="voucherCode" type="text" class="form-control"
+                   placeholder="ESHOP1234ABC5678">
+        </div>
+
+        <div class="form-group col-md-6 px-0">
+            <label for="addressInput">Address (for COD)</label>
+            <input id="addressInput" name="address" type="text" class="form-control">
+        </div>
+
+        <div class="form-group col-md-6 px-0">
+            <label for="deliveryFeeInput">Delivery Fee (for COD)</label>
+            <input id="deliveryFeeInput" name="deliveryFee" type="text" class="form-control">
+        </div>
+
+        <div class="form-group col-md-6 px-0">
+            <label for="bankNameInput">Bank Name (for Bank Transfer)</label>
+            <input id="bankNameInput" name="bankName" type="text" class="form-control">
+        </div>
+
+        <div class="form-group col-md-6 px-0">
+            <label for="referenceCodeInput">Reference Code (for Bank Transfer)</label>
+            <input id="referenceCodeInput" name="referenceCode" type="text" class="form-control">
+        </div>
+
+        <button id="payOrderButton" type="submit" class="btn btn-primary">Pay Order</button>
+        <a th:href="@{/order/history}" class="btn btn-outline-secondary ml-2">Back</a>
+    </form>
+</div>
 </body>
 </html>
