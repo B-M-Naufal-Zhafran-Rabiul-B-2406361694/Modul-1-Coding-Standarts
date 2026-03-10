@@ -2,7 +2,6 @@ package id.ac.ui.cs.advprog.eshop.controller;
 
 import id.ac.ui.cs.advprog.eshop.model.Payment;
 import id.ac.ui.cs.advprog.eshop.service.PaymentService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,8 +15,12 @@ import java.util.List;
 @Controller
 @RequestMapping("/payment")
 public class PaymentController {
-    @Autowired
-    private PaymentService paymentService;
+    private static final String ADMIN_DETAIL_REDIRECT_PREFIX = "redirect:/payment/admin/detail/";
+    private final PaymentService paymentService;
+
+    public PaymentController(PaymentService paymentService) {
+        this.paymentService = paymentService;
+    }
 
     @GetMapping("/detail")
     public String paymentDetailFormPage() {
@@ -26,8 +29,7 @@ public class PaymentController {
 
     @GetMapping("/detail/{paymentId}")
     public String paymentDetailPage(@PathVariable String paymentId, Model model) {
-        Payment payment = paymentService.getPayment(paymentId);
-        model.addAttribute("payment", payment);
+        addPaymentAttribute(model, paymentId);
         return "paymentDetail";
     }
 
@@ -40,8 +42,7 @@ public class PaymentController {
 
     @GetMapping("/admin/detail/{paymentId}")
     public String paymentAdminDetailPage(@PathVariable String paymentId, Model model) {
-        Payment payment = paymentService.getPayment(paymentId);
-        model.addAttribute("payment", payment);
+        addPaymentAttribute(model, paymentId);
         return "paymentAdminDetail";
     }
 
@@ -53,6 +54,11 @@ public class PaymentController {
             paymentService.setStatus(payment, status);
         }
 
-        return "redirect:/payment/admin/detail/" + paymentId;
+        return ADMIN_DETAIL_REDIRECT_PREFIX + paymentId;
+    }
+
+    private void addPaymentAttribute(Model model, String paymentId) {
+        Payment payment = paymentService.getPayment(paymentId);
+        model.addAttribute("payment", payment);
     }
 }

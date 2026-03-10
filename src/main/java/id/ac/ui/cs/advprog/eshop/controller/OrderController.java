@@ -5,7 +5,6 @@ import id.ac.ui.cs.advprog.eshop.model.Payment;
 import id.ac.ui.cs.advprog.eshop.model.Product;
 import id.ac.ui.cs.advprog.eshop.service.OrderService;
 import id.ac.ui.cs.advprog.eshop.service.PaymentService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,11 +22,20 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/order")
 public class OrderController {
-    @Autowired
-    private OrderService orderService;
+    private static final String REDIRECT_HISTORY = "redirect:/order/history";
+    private static final String PAYMENT_DATA_VOUCHER_CODE = "voucherCode";
+    private static final String PAYMENT_DATA_ADDRESS = "address";
+    private static final String PAYMENT_DATA_DELIVERY_FEE = "deliveryFee";
+    private static final String PAYMENT_DATA_BANK_NAME = "bankName";
+    private static final String PAYMENT_DATA_REFERENCE_CODE = "referenceCode";
 
-    @Autowired
-    private PaymentService paymentService;
+    private final OrderService orderService;
+    private final PaymentService paymentService;
+
+    public OrderController(OrderService orderService, PaymentService paymentService) {
+        this.orderService = orderService;
+        this.paymentService = paymentService;
+    }
 
     @GetMapping("/create")
     public String createOrderPage() {
@@ -43,21 +51,19 @@ public class OrderController {
                 author
         );
         orderService.createOrder(order);
-        return "redirect:/order/history";
+        return REDIRECT_HISTORY;
     }
 
     @GetMapping("/history")
     public String orderHistoryPage(Model model) {
-        model.addAttribute("orders", new ArrayList<Order>());
-        model.addAttribute("author", "");
+        populateHistoryModel(model, new ArrayList<>(), "");
         return "orderHistory";
     }
 
     @PostMapping("/history")
     public String orderHistoryByAuthor(@RequestParam("author") String author, Model model) {
         List<Order> orders = orderService.findAllByAuthor(author);
-        model.addAttribute("orders", orders);
-        model.addAttribute("author", author);
+        populateHistoryModel(model, orders, author);
         return "orderHistory";
     }
 
@@ -65,7 +71,7 @@ public class OrderController {
     public String payOrderPage(@PathVariable String orderId, Model model) {
         Order order = orderService.findById(orderId);
         if (order == null) {
-            return "redirect:/order/history";
+            return REDIRECT_HISTORY;
         }
 
         model.addAttribute("order", order);
@@ -83,16 +89,12 @@ public class OrderController {
                            Model model) {
         Order order = orderService.findById(orderId);
         if (order == null) {
-            return "redirect:/order/history";
+            return REDIRECT_HISTORY;
         }
 
-        Map<String, String> paymentData = new HashMap<>();
-        paymentData.put("voucherCode", voucherCode);
-        paymentData.put("address", address);
-        paymentData.put("deliveryFee", deliveryFee);
-        paymentData.put("bankName", bankName);
-        paymentData.put("referenceCode", referenceCode);
-
+        Map<String, String> paymentData = buildPaymentData(
+                voucherCode, address, deliveryFee, bankName, referenceCode
+        );
         Payment payment = paymentService.addPayment(order, method, paymentData);
         Payment updatedPayment = paymentService.setStatus(payment, payment.getStatus());
 
@@ -110,5 +112,24 @@ public class OrderController {
         product.setProductQuantity(1);
         products.add(product);
         return products;
+    }
+
+    private void populateHistoryModel(Model model, List<Order> orders, String author) {
+        model.addAttribute("orders", orders);
+        model.addAttribute("author", author);
+    }
+
+    private Map<String, String> buildPaymentData(String voucherCode,
+                                                 String address,
+                                                 String deliveryFee,
+                                                 String bankName,
+                                                 String referenceCode) {
+        Map<String, String> paymentData = new HashMap<>();
+        paymentData.put(PAYMENT_DATA_VOUCHER_CODE, voucherCode);
+        paymentData.put(PAYMENT_DATA_ADDRESS, address);
+        paymentData.put(PAYMENT_DATA_DELIVERY_FEE, deliveryFee);
+        paymentData.put(PAYMENT_DATA_BANK_NAME, bankName);
+        paymentData.put(PAYMENT_DATA_REFERENCE_CODE, referenceCode);
+        return paymentData;
     }
 }
